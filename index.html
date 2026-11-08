@@ -1,694 +1,762 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wedding Invitation & Guest RSVP</title>
+    <title>Sarah & Michael's Wedding Invitation</title>
+    <!-- Google Fonts & Font Awesome -->
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Montserrat:wght@300;400;500;600&family=Great+Vibes&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=Montserrat:wght@300;400;500;600&family=Great+Vibes&display=swap" rel="stylesheet">
-    <!-- FontAwesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+    <style>
+        :root {
+            --primary: #2c3e35;  /* Deep forest green */
+            --accent: #b89753;   /* Muted gold */
+            --bg-cream: #f7f5f0; /* Soft warm ivory background */
+            --envelope-color: #ffffff;
+            --text-dark: #333333;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--bg-cream);
+            color: var(--text-dark);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Serif headings */
+        h1, h2, h3, .font-serif-custom {
+            font-family: 'Cormorant Garamond', serif;
+        }
+
+        /* Script font for names on envelope */
+        .font-script {
+            font-family: 'Great Vibes', cursive;
+        }
+
+        /* 3D Scene perspective for envelope opening */
+        .perspective-1000 {
+            perspective: 1200px;
+        }
+
+        /* Envelope Flap 3D Flip */
+        .envelope-flap {
+            transform-origin: top center;
+            transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1), z-index 0.8s ease;
+            transform-style: preserve-3d;
+            z-index: 40;
+        }
+
+        .envelope-container.open .envelope-flap {
+            transform: rotateX(180deg);
+            z-index: 10;
+        }
+
+        /* Invitation Card Slide Out Animation */
+        .invitation-card {
+            transition: transform 0.9s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.6s ease;
+            transform: translateY(0);
+            z-index: 20;
+        }
+
+        .envelope-container.open .invitation-card {
+            transform: translateY(-40px);
+        }
+
+        /* Floral Wax Seal Pulse Hover Effect */
+        .seal-button {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .seal-button:hover {
+            transform: scale(1.08) rotate(3deg);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .seal-button:active {
+            transform: scale(0.95);
+        }
+
+        /* Decorative Gold Border */
+        .gold-border {
+            border: 1px solid #e2d1a6;
+            position: relative;
+        }
+        
+        .gold-border::before {
+            content: '';
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            right: 4px;
+            bottom: 4px;
+            border: 1px solid #f3e9d2;
+            pointer-events: none;
+        }
+
+        /* Smooth scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--accent);
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center p-4 sm:p-8 min-h-screen">
+
+    <!-- Enlarged container wrapper for a more prominent upper presentation -->
+    <div class="w-full max-w-3xl mx-auto perspective-1000 my-10 sm:my-14">
+        
+        <!-- ENVELOPE WRAPPER -->
+        <div id="envelopeContainer" class="envelope-container relative w-full transition-all duration-700 ease-in-out">
+
+            <!-- ENVELOPE BACK PANEL & FLAP -->
+            <div class="relative bg-white rounded-xl shadow-2xl border border-stone-200 overflow-hidden">
+
+                <!-- TOP FLAP (WITH WAX SEAL) - Made taller/bigger -->
+                <div id="envelopeFlap" class="envelope-flap absolute top-0 left-0 right-0 h-56 sm:h-64 bg-stone-50 border-b border-stone-200 flex flex-col items-center justify-end pb-6 shadow-sm">
+                    <!-- Triangle flap background artwork -->
+                    <div class="absolute inset-0 bg-gradient-to-b from-stone-100 to-white clip-triangle pointer-events-none"></div>
+                    
+                    <!-- Floral Seal Container -->
+                    <div class="relative z-50 flex flex-col items-center cursor-pointer group" onclick="toggleEnvelope()">
+                        <div class="seal-button w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-white shadow-xl border-2 border-[#b89753]/40 p-1 flex items-center justify-center relative overflow-hidden bg-contain bg-center">
+                            <!-- Cropped Floral Seal Image from URL -->
+                            <img src="https://tse1.mm.bing.net/th/id/OIP.OiSBtlZ8aboPvLvJZP7d1gAAAA?r=0&pid=Api&h=220&P=0" 
+                                 alt="Floral Seal" 
+                                 class="w-full h-full object-cover rounded-full filter contrast-105 saturate-110"
+                                 onerror="this.onerror=null; this.src='https://placehold.co/100x100/2c3e35/ffffff?text=S%26M';">
+                        </div>
+                        <span id="sealText" class="mt-3 text-xs uppercase tracking-widest text-[#b89753] font-semibold bg-white/95 px-4 py-1.5 rounded-full shadow-sm border border-stone-200 transition-opacity">
+                            Click Seal to Open
+                        </span>
+                    </div>
+                </div>
+
+                <!-- ENVELOPE FRONT FACE (WHEN CLOSED) - Adjusted padding to match taller flap -->
+                <div id="envelopeFront" class="pt-64 pb-20 px-6 sm:px-16 text-center transition-opacity duration-500">
+                    <div class="text-stone-400 font-serif italic text-lg sm:text-xl mb-2">Inviting you to celebrate</div>
+                    <div class="font-script text-5xl sm:text-6xl text-[#2c3e35] my-3">Sarah & Michael</div>
+                    <div class="text-xs sm:text-sm uppercase tracking-[0.2em] text-[#b89753] mt-4">September 18, 2026 • Pasig City</div>
+                    <div class="mt-10 text-xs sm:text-sm text-stone-400 italic">Tap the floral seal above to unseal your invitation</div>
+                </div>
+
+                <!-- INVITATION CARD CONTENT (REVEALED UPON OPENING) -->
+                <div id="invitationCard" class="invitation-card hidden opacity-0 p-6 sm:p-12 bg-white">
+                    
+                    <!-- Decorative Inner Border -->
+                    <div class="gold-border p-6 sm:p-10 bg-[#fdfbf7] rounded-sm text-center">
+
+                        <!-- Header Badge -->
+                        <div class="text-xs uppercase tracking-[0.25em] text-[#b89753] font-semibold mb-3">
+                            The Wedding Of
+                        </div>
+
+                        <!-- Couple Names -->
+                        <h1 class="text-4xl sm:text-5xl font-serif-custom text-[#2c3e35] font-normal leading-tight mb-2">
+                            Sarah & Michael
+                        </h1>
+                        <p class="text-stone-600 text-sm sm:text-base italic mb-6">
+                            Together with their families, invite you to celebrate their marriage
+                        </p>
+
+                        <div class="w-16 h-px bg-[#b89753] mx-auto my-6"></div>
+
+                        <!-- Date & Time Section -->
+                        <div class="space-y-2 my-6">
+                            <p class="text-lg sm:text-xl font-medium text-[#2c3e35] font-serif-custom">
+                                Saturday, the 18th of September, 2026
+                            </p>
+                            <p class="text-stone-600 text-sm sm:text-base">
+                                At four o'clock in the afternoon
+                            </p>
+                        </div>
+
+                        <div class="w-8 h-px bg-[#b89753] mx-auto my-6"></div>
+
+                        <!-- OUR STORY SECTION -->
+                        <div class="my-10 text-left bg-stone-50/50 p-6 rounded-lg border border-stone-200">
+                            <h2 class="text-2xl sm:text-3xl font-serif-custom text-center text-[#2c3e35] mb-4">
+                                Our Story
+                            </h2>
+                            <p class="text-stone-600 text-sm leading-relaxed mb-6 text-center italic">
+                                "From a chance coffee shop encounter to a lifetime of adventures together."
+                            </p>
+                            <div class="space-y-6 text-xs sm:text-sm text-stone-700">
+                                <!-- Milestone 2019 -->
+                                <div class="flex flex-col sm:flex-row gap-4 items-center bg-white p-4 rounded-lg border border-stone-200 shadow-sm">
+                                    <div class="w-full sm:w-36 h-28 flex-shrink-0 overflow-hidden rounded bg-stone-100">
+                                        <img src="https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&w=400&q=80" 
+                                             alt="Coffee Shop Meeting" 
+                                             class="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+                                             onerror="this.onerror=null; this.src='https://placehold.co/400x300/2c3e35/ffffff?text=2019';">
+                                    </div>
+                                    <div class="flex-grow">
+                                        <span class="font-serif-custom text-[#b89753] font-bold text-base block mb-1">2019 — The First Meeting</span>
+                                        <p>Sarah and Michael first met at a cozy cafe in Manila while both reaching for the last matcha latte. A conversation started over shared favorite books, and they haven't stopped talking since.</p>
+                                    </div>
+                                </div>
+
+                                <!-- Milestone 2022 -->
+                                <div class="flex flex-col sm:flex-row gap-4 items-center bg-white p-4 rounded-lg border border-stone-200 shadow-sm">
+                                    <div class="w-full sm:w-36 h-28 flex-shrink-0 overflow-hidden rounded bg-stone-100">
+                                        <img src="https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&w=400&q=80" 
+                                             alt="Adopted Dog Milo" 
+                                             class="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+                                             onerror="this.onerror=null; this.src='https://placehold.co/400x300/b89753/ffffff?text=2022';">
+                                    </div>
+                                    <div class="flex-grow">
+                                        <span class="font-serif-custom text-[#b89753] font-bold text-base block mb-1">2022 — Welcoming Milo</span>
+                                        <p>After three years of shared travels, late-night dinners, and countless coffee dates, they adopted their beloved rescue golden retriever, Milo, who brought endless joy into their home.</p>
+                                    </div>
+                                </div>
+
+                                <!-- Milestone 2025 -->
+                                <div class="flex flex-col sm:flex-row gap-4 items-center bg-white p-4 rounded-lg border border-stone-200 shadow-sm">
+                                    <div class="w-full sm:w-36 h-28 flex-shrink-0 overflow-hidden rounded bg-stone-100">
+                                        <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=400&q=80" 
+                                             alt="Beach Proposal El Nido" 
+                                             class="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+                                             onerror="this.onerror=null; this.src='https://placehold.co/400x300/2c3e35/ffffff?text=2025';">
+                                    </div>
+                                    <div class="flex-grow">
+                                        <span class="font-serif-custom text-[#b89753] font-bold text-base block mb-1">2025 — The Proposal</span>
+                                        <p>During a breathtaking sunset walk along the beach in El Nido, Michael popped the question. Surrounded by the gentle ocean waves, Sarah gave a resounding "Yes!"</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- PRENUP VIDEO SECTION -->
+                        <div class="my-10 text-left">
+                            <h2 class="text-2xl sm:text-3xl font-serif-custom text-center text-[#2c3e35] mb-2">
+                                Our Prenup Film
+                            </h2>
+                            <p class="text-stone-600 text-xs sm:text-sm text-center italic mb-6">
+                                "A glimpse into our journey and love story captured in El Nido."
+                            </p>
+                            <div class="rounded-lg border border-stone-200 bg-stone-900 overflow-hidden shadow-md relative group">
+                                <div class="aspect-w-16 aspect-h-9 w-full relative h-64 sm:h-80">
+                                    <iframe class="w-full h-full object-cover" 
+                                            src="https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ?rel=0&modestbranding=1" 
+                                            title="Sarah & Michael Prenup Film" 
+                                            frameborder="0" 
+                                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                            allowfullscreen>
+                                    </iframe>
+                                </div>
+                                <div class="p-4 bg-white flex items-center justify-between text-xs text-stone-600">
+                                    <span class="flex items-center gap-1.5 font-medium text-[#2c3e35]">
+                                        <i class="fa-solid fa-film text-[#b89753]"></i> Cinematic Love Story Feature
+                                    </span>
+                                    <span class="italic text-stone-400">Directed by Manila Cinematics</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- PRENUP PHOTO GALLERY WITH NEXT/PREV CONTROLS -->
+                        <div class="my-10 text-left">
+                            <h2 class="text-2xl sm:text-3xl font-serif-custom text-center text-[#2c3e35] mb-2">
+                                Prenup Photo Gallery
+                            </h2>
+                            <p class="text-stone-600 text-xs sm:text-sm text-center italic mb-6">
+                                "Moments frozen in time from our engagement shoot."
+                            </p>
+                            
+                            <div class="relative rounded-lg border border-stone-200 bg-white overflow-hidden shadow-sm">
+                                <!-- Gallery Slide Container -->
+                                <div class="relative h-72 sm:h-96 w-full bg-stone-100 overflow-hidden flex items-center justify-center">
+                                    <img id="galleryImage" src="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1000&q=80" 
+                                         alt="Prenup Photo 1" 
+                                         class="w-full h-full object-cover transition-all duration-500 ease-in-out"
+                                         onerror="this.onerror=null; this.src='https://placehold.co/800x500/2c3e35/ffffff?text=Engagement+Photo';">
+                                    
+                                    <!-- Caption Overlay -->
+                                    <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent p-4 pt-8 text-white flex justify-between items-end">
+                                        <span id="galleryCaption" class="text-xs sm:text-sm font-medium tracking-wide">Golden Hour at El Nido Shoreline</span>
+                                        <span id="galleryCounter" class="text-[10px] sm:text-xs uppercase tracking-widest bg-white/20 backdrop-blur-sm px-2 py-1 rounded">1 / 4</span>
+                                    </div>
+                                </div>
+
+                                <!-- Navigation Buttons Bar -->
+                                <div class="p-3 bg-stone-50 border-t border-stone-200 flex justify-between items-center">
+                                    <button onclick="prevGalleryImage()" class="bg-white hover:bg-stone-100 text-[#2c3e35] border border-stone-300 py-2 px-4 rounded text-xs font-semibold uppercase tracking-wider transition-colors shadow-sm flex items-center gap-2">
+                                        <i class="fa-solid fa-chevron-left text-[10px]"></i> Previous
+                                    </button>
+                                    
+                                    <div class="flex gap-1.5" id="galleryDots">
+                                        <span class="w-2 h-2 rounded-full bg-[#b89753] transition-all" data-index="0"></span>
+                                        <span class="w-2 h-2 rounded-full bg-stone-300 transition-all" data-index="1"></span>
+                                        <span class="w-2 h-2 rounded-full bg-stone-300 transition-all" data-index="2"></span>
+                                        <span class="w-2 h-2 rounded-full bg-stone-300 transition-all" data-index="3"></span>
+                                    </div>
+
+                                    <button onclick="nextGalleryImage()" class="bg-[#2c3e35] hover:bg-[#1e2a23] text-white py-2 px-4 rounded text-xs font-semibold uppercase tracking-wider transition-colors shadow-sm flex items-center gap-2">
+                                        Next <i class="fa-solid fa-chevron-right text-[10px]"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="w-16 h-px bg-[#b89753] mx-auto my-8"></div>
+
+                        <!-- CHURCH & VENUE DETAILS SECTION -->
+                        <div class="my-10">
+                            <h2 class="text-2xl sm:text-3xl font-serif-custom text-center text-[#2c3e35] mb-6">
+                                Ceremony & Reception
+                            </h2>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">
+                                <!-- Church Ceremony -->
+                                <div class="rounded-lg border border-stone-200 bg-white shadow-sm overflow-hidden flex flex-col justify-between">
+                                    <div class="h-40 w-full overflow-hidden relative bg-stone-100">
+                                        <img src="https://images.unsplash.com/photo-1548625361-19dbfa19a9e5?auto=format&fit=crop&w=600&q=80" 
+                                             alt="St. Clare Monastery Chapel" 
+                                             class="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+                                             onerror="this.onerror=null; this.src='https://placehold.co/600x400/2c3e35/ffffff?text=Church';">
+                                        <div class="absolute bottom-2 left-2 bg-black/60 text-white text-[10px] px-2 py-0.5 rounded tracking-wider uppercase font-medium">
+                                            Ceremony
+                                        </div>
+                                    </div>
+                                    <div class="p-5 flex flex-col justify-between flex-grow">
+                                        <div>
+                                            <div class="flex items-center gap-2 text-[#b89753] font-semibold text-xs uppercase tracking-wider mb-2">
+                                                <i class="fa-solid fa-church text-sm"></i> Holy Matrimony
+                                            </div>
+                                            <h3 class="font-serif-custom text-xl text-[#2c3e35] font-semibold mb-1">St. Clare Monastery Chapel</h3>
+                                            <p class="text-xs text-stone-500 mb-3"><i class="fa-solid fa-clock mr-1"></i> 2:00 PM - Ceremony Begins</p>
+                                            <p class="text-xs text-stone-600 leading-relaxed">
+                                                104 C. Raymundo Ave, Pasig City<br>
+                                                <span class="italic text-stone-500">Please arrive 30 minutes prior to the start of the mass.</span>
+                                            </p>
+                                        </div>
+                                        <div class="mt-4 pt-3 border-t border-stone-100 flex justify-between items-center text-xs">
+                                            <span class="text-stone-500">Attire: Formal / Filipiniana</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Reception Venue -->
+                                <div class="rounded-lg border border-stone-200 bg-white shadow-sm overflow-hidden flex flex-col justify-between">
+                                    <div class="h-40 w-full overflow-hidden relative bg-stone-100">
+                                        <img src="https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&w=600&q=80" 
+                                             alt="The Glass Garden" 
+                                             class="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+                                             onerror="this.onerror=null; this.src='https://placehold.co/600x400/b89753/ffffff?text=Reception';">
+                                        <div class="absolute bottom-2 left-2 bg-black/60 text-white text-[10px] px-2 py-0.5 rounded tracking-wider uppercase font-medium">
+                                            Reception
+                                        </div>
+                                    </div>
+                                    <div class="p-5 flex flex-col justify-between flex-grow">
+                                        <div>
+                                            <div class="flex items-center gap-2 text-[#b89753] font-semibold text-xs uppercase tracking-wider mb-2">
+                                                <i class="fa-solid fa-glass-cheers text-sm"></i> Dinner & Party
+                                            </div>
+                                            <h3 class="font-serif-custom text-xl text-[#2c3e35] font-semibold mb-1">The Glass Garden</h3>
+                                            <p class="text-xs text-stone-500 mb-3"><i class="fa-solid fa-clock mr-1"></i> 5:30 PM - Cocktails & Dinner</p>
+                                            <p class="text-xs text-stone-600 leading-relaxed">
+                                                257 Evangelista Ave, Pasig, Metro Manila<br>
+                                                <span class="italic text-stone-500">Join us for cocktails, dinner, and dancing under the glass canopy.</span>
+                                            </p>
+                                        </div>
+                                        <div class="mt-4 pt-3 border-t border-stone-100 flex justify-between items-center text-xs">
+                                            <span class="text-stone-500">Parking: On-site available</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- VENUE MAP & LOCATION GUIDE -->
+                        <div class="my-10 text-left">
+                            <h3 class="text-xl font-serif-custom text-center text-[#2c3e35] mb-4">
+                                Location Guide & Map
+                            </h3>
+                            
+                            <!-- Stylized Visual Map Illustration -->
+                            <div class="bg-stone-100 border border-stone-200 rounded-lg p-4 relative overflow-hidden">
+                                <svg class="w-full h-48 rounded bg-[#f3efe6]" viewBox="0 0 500 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <!-- Background roads -->
+                                    <path d="M 20 100 Q 150 120 280 80 T 480 110" stroke="#d6cebe" stroke-width="24" stroke-linecap="round"/>
+                                    <path d="M 160 10 L 160 190" stroke="#d6cebe" stroke-width="14"/>
+                                    <path d="M 380 10 L 380 190" stroke="#d6cebe" stroke-width="14"/>
+                                    
+                                    <!-- Road lines -->
+                                    <path d="M 20 100 Q 150 120 280 80 T 480 110" stroke="#ffffff" stroke-width="2" stroke-dasharray="6 6"/>
+                                    
+                                    <!-- Location Pin 1: Church -->
+                                    <g transform="translate(160, 85)">
+                                        <circle r="16" fill="#2c3e35" class="animate-pulse" opacity="0.2"/>
+                                        <circle r="10" fill="#2c3e35"/>
+                                        <path d="M 0 -4 L 0 4 M -4 0 L 4 0" stroke="#ffffff" stroke-width="2"/>
+                                        <text x="18" y="4" font-family="Montserrat" font-size="11" font-weight="bold" fill="#2c3e35">St. Clare Chapel</text>
+                                    </g>
+                                    
+                                    <!-- Route Path -->
+                                    <path d="M 160 85 Q 270 70 380 115" stroke="#b89753" stroke-width="3" stroke-dasharray="4 4"/>
+                                    
+                                    <!-- Location Pin 2: Glass Garden -->
+                                    <g transform="translate(380, 115)">
+                                        <circle r="16" fill="#b89753" class="animate-pulse" opacity="0.2"/>
+                                        <circle r="10" fill="#b89753"/>
+                                        <path d="M -3 -3 L 3 3 M 3 -3 L -3 3" stroke="#ffffff" stroke-width="2"/>
+                                        <text x="18" y="4" font-family="Montserrat" font-size="11" font-weight="bold" fill="#b89753">2. The Glass Garden</text>
+                                    </g>
+                                </svg>
+                                
+                                <div class="flex flex-col sm:flex-row justify-between items-center gap-3 mt-4 text-xs text-stone-600">
+                                <span class="flex items-center gap-1.5">
+                                    <i class="fa-solid fa-car text-[#b89753]"></i> 15 min drive between Church & Reception
+                                </span>
+                                <a href="https://maps.google.com" target="_blank" rel="noopener noreferrer" 
+                                       class="text-[#2c3e35] font-medium underline flex items-center gap-1 hover:text-[#b89753] transition-colors">
+                                    Open in Google Maps <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                        <!-- ENTOURAGE & PRINCIPAL SPONSORS SECTION (WITH PARENTS OF THE BRIDE & GROOM) -->
+                        <div class="my-10 text-left bg-stone-50/60 p-6 sm:p-8 rounded-lg border border-stone-200">
+                            <h2 class="text-2xl sm:text-3xl font-serif-custom text-center text-[#2c3e35] mb-2">
+                                Wedding Party & Sponsors
+                            </h2>
+                            <p class="text-stone-600 text-xs sm:text-sm text-center italic mb-8">
+                                "The special people guiding and standing alongside us on our big day."
+                            </p>
+
+                            <div class="space-y-6 text-xs sm:text-sm text-stone-700">
+                                <!-- Parents of the Bride & Groom -->
+                                <div class="border-b border-stone-200 pb-5">
+                                    <h3 class="font-serif-custom text-[#b89753] font-bold text-lg text-center uppercase tracking-widest mb-3">Parents of the Couple</h3>
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-center">
+                                        <div>
+                                            <h4 class="font-serif-custom text-xs uppercase text-stone-500 font-semibold mb-1">Parents of the Bride</h4>
+                                            <p class="font-medium text-[#2c3e35]">Mr. David & Mrs. Catherine Johnson</p>
+                                        </div>
+                                        <div>
+                                            <h4 class="font-serif-custom text-xs uppercase text-stone-500 font-semibold mb-1">Parents of the Groom</h4>
+                                            <p class="font-medium text-[#2c3e35]">Mr. Arthur & Mrs. Beatrice Miller</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Principal Sponsors -->
+                                <div class="border-b border-stone-200 pb-5">
+                                    <h3 class="font-serif-custom text-[#b89753] font-bold text-lg text-center uppercase tracking-widest mb-3">Principal Sponsors</h3>
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-center">
+                                        <div>
+                                            <p class="font-medium text-[#2c3e35]">Mr. Roberto & Mrs. Elena Cruz</p>
+                                            <p class="font-medium text-[#2c3e35] mt-1">Atty. Ricardo Santos</p>
+                                        </div>
+                                        <div>
+                                            <p class="font-medium text-[#2c3e35]">Dr. Maria Teresa Reyes</p>
+                                            <p class="font-medium text-[#2c3e35] mt-1">Mr. Fernando & Mrs. Sofia Gomez</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Maid of Honor & Best Man -->
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 border-b border-stone-200 pb-5 text-center">
+                                    <div>
+                                        <h4 class="font-serif-custom text-[#b89753] font-bold text-base uppercase tracking-wider mb-1">Maid of Honor</h4>
+                                        <p class="font-semibold text-[#2c3e35]">Jessica Jenkins</p>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-serif-custom text-[#b89753] font-bold text-base uppercase tracking-wider mb-1">Best Man</h4>
+                                        <p class="font-semibold text-[#2c3e35]">David Miller</p>
+                                    </div>
+                                </div>
+
+                                <!-- Groomsmen & Bridesmaids -->
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 text-center">
+                                    <div>
+                                        <h4 class="font-serif-custom text-[#b89753] font-bold text-base uppercase tracking-wider mb-2">Bridesmaids</h4>
+                                        <ul class="space-y-1 text-stone-600">
+                                            <li>Amanda Vance</li>
+                                            <li>Chloe Davenport</li>
+                                            <li>Rachel Green</li>
+                                        </ul>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-serif-custom text-[#b89753] font-bold text-base uppercase tracking-wider mb-2">Groomsmen</h4>
+                                        <ul class="space-y-1 text-stone-600">
+                                            <li>Marcus Sterling</li>
+                                            <li>Benjamin Wright</li>
+                                            <li>Lucas Vance</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="w-16 h-px bg-[#b89753] mx-auto my-8"></div>
+
+                        <!-- RSVP FORM SECTION -->
+                        <div id="rsvpSection" class="mt-8 pt-6 border-t border-stone-200 text-left">
+                            <h2 class="font-serif-custom text-2xl sm:text-3xl text-center text-[#2c3e35] mb-6">
+                                Kindly Reply
+                            </h2>
+
+                            <form id="rsvpForm" class="space-y-4">
+                                <div>
+                                    <label for="name" class="block text-xs uppercase tracking-wider font-semibold text-[#2c3e35] mb-1">
+                                        Full Name(s)
+                                    </label>
+                                    <input type="text" id="name" name="name" required placeholder="e.g. Mr. & Mrs. Davis" 
+                                           class="w-full p-3 border border-stone-300 rounded focus:ring-1 focus:ring-[#b89753] focus:border-[#b89753] outline-none text-sm transition-all">
+                                </div>
+
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <div>
+                                        <label for="attendance" class="block text-xs uppercase tracking-wider font-semibold text-[#2c3e35] mb-1">
+                                            Will you attend?
+                                        </label>
+                                        <select id="attendance" name="attendance" required 
+                                                class="w-full p-3 border border-stone-300 rounded focus:ring-1 focus:ring-[#b89753] focus:border-[#b89753] outline-none text-sm bg-white transition-all">
+                                            <option value="">Select response...</option>
+                                            <option value="Joyfully Accepts">Accepts with Pleasure</option>
+                                            <option value="Regretfully Declines">Declines with Regret</option>
+                                        </select>
+                                    </div>
+
+                                    <div>
+                                        <label for="guests" class="block text-xs uppercase tracking-wider font-semibold text-[#2c3e35] mb-1">
+                                            Number of Guests
+                                        </label>
+                                        <select id="guests" name="guests" 
+                                                class="w-full p-3 border border-stone-300 rounded focus:ring-1 focus:ring-[#b89753] focus:border-[#b89753] outline-none text-sm bg-white transition-all">
+                                            <option value="1">1 Guest</option>
+                                            <option value="2">2 Guests</option>
+                                            <option value="3">3 Guests</option>
+                                            <option value="4">4 Guests</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label for="dietary" class="block text-xs uppercase tracking-wider font-semibold text-[#2c3e35] mb-1">
+                                        Dietary Restrictions / Special Notes
+                                    </label>
+                                    <textarea id="dietary" name="dietary" rows="2" placeholder="Let us know if you have any food allergies..." 
+                                              class="w-full p-3 border border-stone-300 rounded focus:ring-1 focus:ring-[#b89753] focus:border-[#b89753] outline-none text-sm transition-all"></textarea>
+                                </div>
+
+                                <button type="submit" 
+                                        class="w-full bg-[#2c3e35] hover:bg-[#1e2a23] text-white py-3 px-6 rounded font-medium text-sm tracking-wider uppercase transition-colors shadow-sm">
+                                    Submit RSVP
+                                </button>
+                            </form>
+
+                            <!-- Success Banner -->
+                            <div id="successMessage" class="hidden mt-4 p-4 bg-emerald-50 border border-emerald-200 text-emerald-800 text-center text-sm rounded">
+                                <i class="fa-solid fa-circle-check mr-2"></i> Thank you! Your RSVP has been recorded.
+                            </div>
+                        </div>
+
+                        <!-- ORGANIZER TRACKER PANEL -->
+                        <div class="mt-10 p-5 bg-stone-100/70 border border-dashed border-stone-300 rounded-lg text-left">
+                            <h3 class="font-serif-custom text-lg font-semibold text-[#2c3e35] mb-1">
+                                Couple & Organizer Dashboard
+                            </h3>
+                            <p class="text-xs text-stone-500 mb-4">
+                                RSVPs are saved securely in your browser storage. Download the attendee list report as a CSV file below.
+                            </p>
+                            <button type="button" onclick="exportToCSV()" 
+                                    class="w-full bg-[#b89753] hover:bg-[#a48344] text-white py-2.5 px-4 rounded text-xs font-semibold uppercase tracking-wider transition-colors shadow-sm flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-file-csv"></i> Download Guest List (CSV)
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Notification Modal replacing window.alert -->
+    <div id="customModal" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-lg p-6 max-w-sm w-full shadow-xl text-center space-y-4 border border-stone-200">
+            <div id="modalIcon" class="text-3xl text-[#b89753]">
+                <i class="fa-solid fa-circle-info"></i>
+            </div>
+            <p id="modalMessage" class="text-stone-700 text-sm font-medium"></p>
+            <button onclick="closeModal()" class="w-full bg-[#2c3e35] text-white py-2 px-4 rounded text-xs uppercase tracking-wider font-semibold">
+                Close
+            </button>
+        </div>
+    </div>
+
     <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        rose: {
-                            50: '#fff1f2',
-                            100: '#ffe4e6',
-                            200: '#fecdd3',
-                            700: '#be123c',
-                            800: '#9f1239',
-                        },
-                        sage: {
-                            50: '#f4f7f4',
-                            100: '#e3ebe3',
-                            600: '#5b705b',
-                            800: '#384738',
-                        },
-                        gold: {
-                            400: '#d4af37',
-                            500: '#c59b27',
-                            600: '#aa820a',
-                        }
-                    },
-                    fontFamily: {
-                        serif: ['"Cormorant Garamond"', 'serif'],
-                        sans: ['Montserrat', 'sans-serif'],
-                        cursive: ['"Great Vibes"', 'cursive']
+        let isEnvelopeOpen = false;
+
+        // Prenup Gallery Data
+        const gallerySlides = [
+            {
+                url: "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1000&q=80",
+                caption: "Golden Hour at El Nido Shoreline"
+            },
+            {
+                url: "https://images.unsplash.com/photo-1583939003579-730e3918a45a?auto=format&fit=crop&w=1000&q=80",
+                caption: "A quiet stroll among the limestone cliffs"
+            },
+            {
+                url: "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&w=1000&q=80",
+                caption: "Laughter and shared secrets under the palms"
+            },
+            {
+                url: "https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?auto=format&fit=crop&w=1000&q=80",
+                caption: "Embracing forever as the sun sets"
+            }
+        ];
+        let currentGalleryIndex = 0;
+
+        function updateGalleryView() {
+            const imgElement = document.getElementById('galleryImage');
+            const captionElement = document.getElementById('galleryCaption');
+            const counterElement = document.getElementById('galleryCounter');
+            const dotsContainer = document.getElementById('galleryDots');
+
+            // Fade out effect
+            imgElement.style.opacity = '0.3';
+
+            setTimeout(() => {
+                imgElement.src = gallerySlides[currentGalleryIndex].url;
+                captionElement.textContent = gallerySlides[currentGalleryIndex].caption;
+                counterElement.textContent = `${currentGalleryIndex + 1} / ${gallerySlides.length}`;
+                imgElement.style.opacity = '1';
+            }, 150);
+
+            // Update pagination dots
+            if (dotsContainer) {
+                const dots = dotsContainer.children;
+                for (let i = 0; i < dots.length; i++) {
+                    if (i === currentGalleryIndex) {
+                        dots[i].className = "w-2.5 h-2.5 rounded-full bg-[#b89753] transition-all scale-110";
+                    } else {
+                        dots[i].className = "w-2 h-2 rounded-full bg-stone-300 transition-all";
                     }
                 }
             }
         }
-    </script>
-    <style>
-        .hero-bg {
-            background-image: linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1920&q=80');
-            background-size: cover;
-            background-position: center;
-        }
-        .modal-backdrop {
-            background-color: rgba(15, 23, 42, 0.65);
-            backdrop-filter: blur(4px);
-        }
-    </style>
-</head>
-<body class="bg-stone-50 text-stone-800 font-sans antialiased selection:bg-rose-200 selection:text-rose-900">
 
-    <!-- Navigation Header -->
-    <nav class="fixed top-0 left-0 right-0 z-40 bg-white/80 backdrop-blur-md border-b border-stone-200 transition-all duration-300">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-16 sm:h-20">
-                <a href="#hero" class="font-serif text-2xl font-bold tracking-wider text-stone-900">A & E</a>
+        function nextGalleryImage() {
+            currentGalleryIndex = (currentGalleryIndex + 1) % gallerySlides.length;
+            updateGalleryView();
+        }
+
+        function prevGalleryImage() {
+            currentGalleryIndex = (currentGalleryIndex - 1 + gallerySlides.length) % gallerySlides.length;
+            updateGalleryView();
+        }
+
+        function toggleEnvelope() {
+            const container = document.getElementById('envelopeContainer');
+            const front = document.getElementById('envelopeFront');
+            const card = document.getElementById('invitationCard');
+            const sealText = document.getElementById('sealText');
+
+            isEnvelopeOpen = !isEnvelopeOpen;
+
+            if (isEnvelopeOpen) {
+                container.classList.add('open');
+                sealText.textContent = "Click Seal to Close";
                 
-                <!-- Desktop Nav -->
-                <div class="hidden md:flex space-x-8 text-sm font-medium tracking-wider uppercase text-stone-600">
-                    <a href="#our-story" class="hover:text-rose-700 transition">Our Story</a>
-                    <a href="#schedule" class="hover:text-rose-700 transition">Schedule</a>
-                    <a href="#gallery" class="hover:text-rose-700 transition">Gallery</a>
-                    <a href="#rsvp" class="hover:text-rose-700 transition">RSVP</a>
-                </div>
-
-                <!-- Host Portal Trigger -->
-                <button onclick="toggleHostModal(true)" class="inline-flex items-center gap-2 text-xs uppercase tracking-wider bg-stone-900 text-stone-100 hover:bg-rose-800 px-4 py-2 rounded-full transition shadow-sm">
-                    <i class="fa-solid fa-lock"></i>
-                    <span>Host Portal</span>
-                </button>
-            </div>
-        </div>
-    </nav>
-
-    <!-- Hero Section -->
-    <section id="hero" class="relative hero-bg min-h-screen flex items-center justify-center text-center text-white px-4 pt-16">
-        <div class="max-w-3xl mx-auto space-y-6">
-            <p class="font-serif italic text-xl md:text-2xl text-rose-100 font-light tracking-wide">Together with their families</p>
-            <h1 class="font-cursive text-6xl sm:text-7xl md:text-8xl text-white drop-shadow-md py-2">Amelia & Ethan</h1>
-            <p class="text-sm sm:text-base tracking-widest uppercase font-light text-stone-200">Are getting married</p>
-            
-            <div class="pt-4 flex flex-col sm:flex-row justify-center items-center gap-4 text-lg font-serif">
-                <span class="flex items-center gap-2"><i class="fa-regular fa-calendar text-rose-300"></i> October 24, 2026</span>
-                <span class="hidden sm:inline text-rose-300">•</span>
-                <span class="flex items-center gap-2"><i class="fa-solid fa-location-dot text-rose-300"></i> Napa Valley, California</span>
-            </div>
-
-            <!-- Countdown Clock -->
-            <div id="countdown" class="grid grid-cols-4 gap-2 sm:gap-4 max-w-md mx-auto pt-8">
-                <div class="bg-black/40 backdrop-blur-sm p-3 rounded-xl border border-white/10">
-                    <span id="cd-days" class="block font-serif text-2xl sm:text-3xl font-bold text-rose-200">00</span>
-                    <span class="text-xs uppercase tracking-widest text-stone-300">Days</span>
-                </div>
-                <div class="bg-black/40 backdrop-blur-sm p-3 rounded-xl border border-white/10">
-                    <span id="cd-hours" class="block font-serif text-2xl sm:text-3xl font-bold text-rose-200">00</span>
-                    <span class="text-xs uppercase tracking-widest text-stone-300">Hours</span>
-                </div>
-                <div class="bg-black/40 backdrop-blur-sm p-3 rounded-xl border border-white/10">
-                    <span id="cd-mins" class="block font-serif text-2xl sm:text-3xl font-bold text-rose-200">00</span>
-                    <span class="text-xs uppercase tracking-widest text-stone-300">Mins</span>
-                </div>
-                <div class="bg-black/40 backdrop-blur-sm p-3 rounded-xl border border-white/10">
-                    <span id="cd-secs" class="block font-serif text-2xl sm:text-3xl font-bold text-rose-200">00</span>
-                    <span class="text-xs uppercase tracking-widest text-stone-300">Secs</span>
-                </div>
-            </div>
-
-            <div class="pt-8">
-                <a href="#rsvp" class="inline-block bg-rose-700 hover:bg-rose-800 text-white font-medium px-8 py-3.5 rounded-full shadow-lg hover:shadow-rose-900/30 transition transform hover:-translate-y-0.5 tracking-wider uppercase text-sm">
-                    Respond to RSVP
-                </a>
-            </div>
-        </div>
-    </section>
-
-    <!-- Our Story Section -->
-    <section id="our-story" class="py-20 px-4 max-w-5xl mx-auto">
-        <div class="text-center mb-16">
-            <span class="text-rose-700 font-serif italic text-xl">How It Started</span>
-            <h2 class="font-serif text-4xl sm:text-5xl text-stone-900 font-normal mt-1">Our Love Story</h2>
-            <div class="w-16 h-0.5 bg-rose-300 mx-auto mt-4"></div>
-        </div>
-
-        <div class="space-y-12">
-            <div class="flex flex-col md:flex-row items-center gap-8 bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-stone-100">
-                <img src="https://images.unsplash.com/photo-1522673607200-164d1b6ce486?auto=format&fit=crop&w=600&q=80" alt="First Encounter" class="w-full md:w-1/2 h-64 object-cover rounded-xl">
-                <div class="space-y-3 md:w-1/2">
-                    <span class="text-xs uppercase tracking-widest text-rose-700 font-semibold">September 2021</span>
-                    <h3 class="font-serif text-2xl text-stone-900">First Coffee & Instant Connection</h3>
-                    <p class="text-stone-600 leading-relaxed text-sm">What was supposed to be a 30-minute quick coffee date turned into a five-hour stroll through central park sharing childhood dreams, favorite books, and continuous laughter.</p>
-                </div>
-            </div>
-
-            <div class="flex flex-col md:flex-row-reverse items-center gap-8 bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-stone-100">
-                <img src="https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?auto=format&fit=crop&w=600&q=80" alt="The Proposal" class="w-full md:w-1/2 h-64 object-cover rounded-xl">
-                <div class="space-y-3 md:w-1/2">
-                    <span class="text-xs uppercase tracking-widest text-rose-700 font-semibold">December 2025</span>
-                    <h3 class="font-serif text-2xl text-stone-900">A Sunset Proposal in Florence</h3>
-                    <p class="text-stone-600 leading-relaxed text-sm">Under the warm glow of the Tuscan sunset, Ethan asked the easiest question Amelia ever had to answer. Surrounding acoustic guitars and old-world magic made it unforgettable.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Schedule & Venue Section -->
-    <section id="schedule" class="py-20 bg-stone-100/70 px-4 border-y border-stone-200">
-        <div class="max-w-5xl mx-auto">
-            <div class="text-center mb-16">
-                <span class="text-rose-700 font-serif italic text-xl">Details & Venue</span>
-                <h2 class="font-serif text-4xl sm:text-5xl text-stone-900 font-normal mt-1">Wedding Day Itinerary</h2>
-                <div class="w-16 h-0.5 bg-rose-300 mx-auto mt-4"></div>
-            </div>
-
-            <div class="grid md:grid-cols-3 gap-8">
-                <!-- Event 1 -->
-                <div class="bg-white p-8 rounded-2xl text-center border border-stone-200 shadow-sm flex flex-col items-center">
-                    <div class="w-14 h-14 bg-rose-50 text-rose-700 rounded-full flex items-center justify-center text-xl mb-4">
-                        <i class="fa-solid fa-church"></i>
-                    </div>
-                    <span class="text-xs uppercase tracking-widest text-stone-500 font-medium">4:00 PM - 5:00 PM</span>
-                    <h3 class="font-serif text-2xl text-stone-900 my-2">The Ceremony</h3>
-                    <p class="text-stone-600 text-sm mb-4">The Estate Gardens, Meadow Lawn</p>
-                    <p class="text-xs text-stone-500">Please arrive 20 minutes early to be seated comfortably before the bride walks down the aisle.</p>
-                </div>
-
-                <!-- Event 2 -->
-                <div class="bg-white p-8 rounded-2xl text-center border border-stone-200 shadow-sm flex flex-col items-center">
-                    <div class="w-14 h-14 bg-rose-50 text-rose-700 rounded-full flex items-center justify-center text-xl mb-4">
-                        <i class="fa-solid fa-wine-glass"></i>
-                    </div>
-                    <span class="text-xs uppercase tracking-widest text-stone-500 font-medium">5:00 PM - 6:30 PM</span>
-                    <h3 class="font-serif text-2xl text-stone-900 my-2">Cocktail Hour</h3>
-                    <p class="text-stone-600 text-sm mb-4">The Terrace Courtyard</p>
-                    <p class="text-xs text-stone-500">Enjoy artisanal wines, signature cocktails, and live jazz while the couple takes portraits.</p>
-                </div>
-
-                <!-- Event 3 -->
-                <div class="bg-white p-8 rounded-2xl text-center border border-stone-200 shadow-sm flex flex-col items-center">
-                    <div class="w-14 h-14 bg-rose-50 text-rose-700 rounded-full flex items-center justify-center text-xl mb-4">
-                        <i class="fa-solid fa-champagne-glasses"></i>
-                    </div>
-                    <span class="text-xs uppercase tracking-widest text-stone-500 font-medium">6:30 PM - Midnight</span>
-                    <h3 class="font-serif text-2xl text-stone-900 my-2">Dinner & Party</h3>
-                    <p class="text-stone-600 text-sm mb-4">Grand Vineyard Ballroom</p>
-                    <p class="text-xs text-stone-500">A three-course seasonal dinner followed by toasts, cake cutting, and dancing until late.</p>
-                </div>
-            </div>
-
-            <!-- Location Callout -->
-            <div class="mt-12 bg-white p-6 sm:p-8 rounded-2xl border border-stone-200 shadow-sm flex flex-col md:flex-row items-center justify-between gap-6">
-                <div>
-                    <h4 class="font-serif text-2xl text-stone-900">Villa Bella Vista Vineyard</h4>
-                    <p class="text-stone-600 text-sm mt-1">1284 St Helena Hwy, Saint Helena, CA 94574</p>
-                    <p class="text-xs text-stone-500 mt-2"><i class="fa-solid fa-circle-info text-rose-700 mr-1"></i> Dress Code: Elegant Formal / Black Tie Optional</p>
-                </div>
-                <a href="https://maps.google.com" target="_blank" rel="noopener noreferrer" class="whitespace-nowrap px-6 py-3 border border-stone-800 text-stone-800 hover:bg-stone-900 hover:text-white rounded-full text-xs font-semibold uppercase tracking-wider transition">
-                    <i class="fa-solid fa-map-location-dot mr-2"></i> Get Directions
-                </a>
-            </div>
-        </div>
-    </section>
-
-    <!-- Gallery Section -->
-    <section id="gallery" class="py-20 px-4 max-w-5xl mx-auto">
-        <div class="text-center mb-16">
-            <span class="text-rose-700 font-serif italic text-xl">Moments</span>
-            <h2 class="font-serif text-4xl sm:text-5xl text-stone-900 font-normal mt-1">Captured Memories</h2>
-            <div class="w-16 h-0.5 bg-rose-300 mx-auto mt-4"></div>
-        </div>
-
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <img src="https://images.unsplash.com/photo-1583939003579-730e3918a45a?auto=format&fit=crop&w=600&q=80" alt="Gallery Photo 1" class="w-full h-64 object-cover rounded-xl shadow-sm hover:opacity-95 transition">
-            <img src="https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&w=600&q=80" alt="Gallery Photo 2" class="w-full h-64 object-cover rounded-xl shadow-sm hover:opacity-95 transition">
-            <img src="https://images.unsplash.com/photo-1532712938310-34cb3982ef74?auto=format&fit=crop&w=600&q=80" alt="Gallery Photo 3" class="w-full h-64 object-cover rounded-xl shadow-sm hover:opacity-95 transition">
-            <img src="https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?auto=format&fit=crop&w=600&q=80" alt="Gallery Photo 4" class="w-full h-64 object-cover rounded-xl shadow-sm hover:opacity-95 transition">
-        </div>
-    </section>
-
-    <!-- Guest RSVP Section -->
-    <section id="rsvp" class="py-20 bg-rose-50/50 px-4 border-t border-stone-200">
-        <div class="max-w-2xl mx-auto">
-            <div class="text-center mb-10">
-                <span class="text-rose-700 font-serif italic text-xl">Kindly Respond</span>
-                <h2 class="font-serif text-4xl sm:text-5xl text-stone-900 font-normal mt-1">RSVP Form</h2>
-                <p class="text-stone-600 text-sm mt-2">Please let us know if you will be celebrating with us by September 1, 2026.</p>
-                <div class="w-16 h-0.5 bg-rose-300 mx-auto mt-4"></div>
-            </div>
-
-            <!-- RSVP Form Card -->
-            <form id="rsvp-form" onsubmit="handleRsvpSubmit(event)" class="bg-white p-6 sm:p-10 rounded-2xl shadow-md border border-stone-200 space-y-6">
-                <div>
-                    <label class="block text-xs uppercase tracking-wider text-stone-700 font-semibold mb-2">Full Name *</label>
-                    <input type="text" id="guest-name" required placeholder="e.g. Eleanor Vance" class="w-full px-4 py-3 rounded-lg border border-stone-300 focus:ring-2 focus:ring-rose-500 focus:border-rose-500 text-stone-800 text-sm outline-none transition">
-                </div>
-
-                <div>
-                    <label class="block text-xs uppercase tracking-wider text-stone-700 font-semibold mb-2">Email Address *</label>
-                    <input type="email" id="guest-email" required placeholder="eleanor@example.com" class="w-full px-4 py-3 rounded-lg border border-stone-300 focus:ring-2 focus:ring-rose-500 focus:border-rose-500 text-stone-800 text-sm outline-none transition">
-                </div>
-
-                <div>
-                    <label class="block text-xs uppercase tracking-wider text-stone-700 font-semibold mb-2">Attendance Status *</label>
-                    <select id="guest-attendance" required onchange="togglePlusOneFields()" class="w-full px-4 py-3 rounded-lg border border-stone-300 focus:ring-2 focus:ring-rose-500 focus:border-rose-500 text-stone-800 text-sm outline-none transition">
-                        <option value="Attending">Joyfully Accepts (Attending)</option>
-                        <option value="Declined">Regretfully Declines</option>
-                    </select>
-                </div>
-
-                <div id="dietary-container">
-                    <label class="block text-xs uppercase tracking-wider text-stone-700 font-semibold mb-2">Dietary Restrictions & Preferences</label>
-                    <input type="text" id="guest-dietary" placeholder="e.g. Vegetarian, Nut Allergy, Gluten Free" class="w-full px-4 py-3 rounded-lg border border-stone-300 focus:ring-2 focus:ring-rose-500 focus:border-rose-500 text-stone-800 text-sm outline-none transition">
-                </div>
-
-                <div id="plusone-container" class="space-y-4 pt-2 border-t border-stone-100">
-                    <div class="flex items-center gap-3">
-                        <input type="checkbox" id="has-plusone" onchange="togglePlusOneInput()" class="w-4 h-4 text-rose-600 rounded border-stone-300 focus:ring-rose-500">
-                        <label for="has-plusone" class="text-sm text-stone-700 font-medium">I will be bringing a guest (+1)</label>
-                    </div>
-
-                    <div id="plusone-details" class="hidden space-y-4 pl-4 border-l-2 border-rose-200">
-                        <div>
-                            <label class="block text-xs uppercase tracking-wider text-stone-600 font-semibold mb-1">Plus One Full Name</label>
-                            <input type="text" id="plusone-name" placeholder="Guest Name" class="w-full px-4 py-2.5 rounded-lg border border-stone-300 text-stone-800 text-sm outline-none focus:ring-2 focus:ring-rose-500">
-                        </div>
-                        <div>
-                            <label class="block text-xs uppercase tracking-wider text-stone-600 font-semibold mb-1">Plus One Dietary Requirements</label>
-                            <input type="text" id="plusone-dietary" placeholder="Dietary restrictions" class="w-full px-4 py-2.5 rounded-lg border border-stone-300 text-stone-800 text-sm outline-none focus:ring-2 focus:ring-rose-500">
-                        </div>
-                    </div>
-                </div>
-
-                <div>
-                    <label class="block text-xs uppercase tracking-wider text-stone-700 font-semibold mb-2">Message for the Bride & Groom</label>
-                    <textarea id="guest-notes" rows="3" placeholder="Share a favorite memory or well wishes..." class="w-full px-4 py-3 rounded-lg border border-stone-300 focus:ring-2 focus:ring-rose-500 focus:border-rose-500 text-stone-800 text-sm outline-none transition"></textarea>
-                </div>
-
-                <button type="submit" class="w-full bg-stone-900 hover:bg-rose-800 text-white font-medium py-3.5 rounded-lg uppercase tracking-wider text-sm transition shadow-md">
-                    Submit RSVP Response
-                </button>
-            </form>
-
-            <!-- Submission Confirmation Message -->
-            <div id="rsvp-confirmation" class="hidden bg-white p-8 rounded-2xl shadow-md border border-stone-200 text-center space-y-4">
-                <div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center text-3xl mx-auto">
-                    <i class="fa-solid fa-check"></i>
-                </div>
-                <h3 class="font-serif text-3xl text-stone-900">Thank You!</h3>
-                <p id="rsvp-confirm-text" class="text-stone-600 text-sm leading-relaxed"></p>
-                <button onclick="resetRsvpForm()" class="text-xs uppercase font-semibold text-rose-700 hover:underline pt-2 inline-block">
-                    Submit Another Response
-                </button>
-            </div>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer class="bg-stone-900 text-stone-400 py-12 text-center text-xs tracking-widest uppercase">
-        <p class="font-serif text-xl text-white normal-case tracking-normal mb-2">Amelia & Ethan</p>
-        <p>October 24, 2026 • Napa Valley, CA</p>
-        <p class="mt-6 text-stone-600">Created with Love for Our Special Day</p>
-    </footer>
-
-    <!-- HOST PORTAL MODAL -->
-    <div id="host-modal" class="fixed inset-0 z-50 modal-backdrop hidden flex items-center justify-center p-4">
-        <div class="bg-white w-full max-w-4xl rounded-2xl shadow-2xl overflow-hidden max-h-[90vh] flex flex-col border border-stone-200">
-            <!-- Modal Header -->
-            <div class="bg-stone-900 text-white px-6 py-4 flex items-center justify-between border-b border-stone-800">
-                <div class="flex items-center gap-2">
-                    <i class="fa-solid fa-sliders text-rose-400"></i>
-                    <h3 class="font-serif text-xl font-medium">Host Dashboard & RSVP Management</h3>
-                </div>
-                <button onclick="toggleHostModal(false)" class="text-stone-400 hover:text-white transition">
-                    <i class="fa-solid fa-xmark text-xl"></i>
-                </button>
-            </div>
-
-            <!-- Login View -->
-            <div id="host-login-view" class="p-8 text-center max-w-md mx-auto my-auto w-full space-y-4">
-                <div class="w-12 h-12 bg-rose-50 text-rose-700 rounded-full flex items-center justify-center text-xl mx-auto mb-2">
-                    <i class="fa-solid fa-lock"></i>
-                </div>
-                <h4 class="font-serif text-2xl text-stone-900">Host Access</h4>
-                <p class="text-stone-500 text-xs">Enter the host passcode to access guest tracking and statistics.</p>
-                <div>
-                    <input type="password" id="host-passcode" placeholder="Enter Passcode (Default: 1234)" class="w-full px-4 py-2.5 rounded-lg border border-stone-300 text-center text-stone-800 outline-none focus:ring-2 focus:ring-rose-500 text-sm">
-                    <p id="login-error" class="text-rose-600 text-xs mt-2 hidden">Incorrect passcode. Try again.</p>
-                </div>
-                <button onclick="verifyPasscode()" class="w-full bg-rose-700 hover:bg-rose-800 text-white text-xs font-semibold uppercase tracking-wider py-3 rounded-lg transition">
-                    Unlock Dashboard
-                </button>
-            </div>
-
-            <!-- Main Dashboard View -->
-            <div id="host-dashboard-view" class="hidden flex-1 overflow-y-auto p-6 space-y-6">
-                <!-- Stats Overview Cards -->
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <div class="bg-stone-50 p-4 rounded-xl border border-stone-200">
-                        <span class="text-xs uppercase tracking-wider text-stone-500 font-semibold">Total Responses</span>
-                        <div id="stat-responses" class="font-serif text-3xl font-bold text-stone-900 mt-1">0</div>
-                    </div>
-                    <div class="bg-emerald-50 p-4 rounded-xl border border-emerald-200">
-                        <span class="text-xs uppercase tracking-wider text-emerald-700 font-semibold">Attending Guests</span>
-                        <div id="stat-attending" class="font-serif text-3xl font-bold text-emerald-800 mt-1">0</div>
-                    </div>
-                    <div class="bg-rose-50 p-4 rounded-xl border border-rose-200">
-                        <span class="text-xs uppercase tracking-wider text-rose-700 font-semibold">Declined</span>
-                        <div id="stat-declined" class="font-serif text-3xl font-bold text-rose-800 mt-1">0</div>
-                    </div>
-                    <div class="bg-amber-50 p-4 rounded-xl border border-amber-200">
-                        <span class="text-xs uppercase tracking-wider text-amber-700 font-semibold">Dietary Notes</span>
-                        <div id="stat-dietary" class="font-serif text-3xl font-bold text-amber-800 mt-1">0</div>
-                    </div>
-                </div>
-
-                <!-- Controls Bar -->
-                <div class="flex flex-col sm:flex-row justify-between gap-4 items-center bg-stone-100 p-4 rounded-xl">
-                    <div class="flex items-center gap-2 w-full sm:w-auto">
-                        <i class="fa-solid fa-magnifying-glass text-stone-400 text-sm"></i>
-                        <input type="text" id="search-rsvp" oninput="renderRsvpList()" placeholder="Search guest name..." class="bg-white border border-stone-300 rounded-lg px-3 py-1.5 text-xs text-stone-800 outline-none w-full sm:w-64 focus:ring-2 focus:ring-rose-500">
-                    </div>
-
-                    <div class="flex items-center gap-3 w-full sm:w-auto justify-end">
-                        <select id="filter-status" onchange="renderRsvpList()" class="bg-white border border-stone-300 rounded-lg px-3 py-1.5 text-xs text-stone-800 outline-none">
-                            <option value="ALL">All Statuses</option>
-                            <option value="Attending">Attending Only</option>
-                            <option value="Declined">Declined Only</option>
-                        </select>
-                        <button onclick="exportToCsv()" class="bg-stone-800 hover:bg-stone-900 text-white text-xs px-3 py-2 rounded-lg transition flex items-center gap-1.5 whitespace-nowrap">
-                            <i class="fa-solid fa-file-csv"></i> Export CSV
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Guest List Table -->
-                <div class="border border-stone-200 rounded-xl overflow-x-auto">
-                    <table class="w-full text-left text-xs text-stone-700">
-                        <thead class="bg-stone-100 uppercase tracking-wider text-stone-500 border-b border-stone-200 font-semibold">
-                            <tr>
-                                <th class="p-3.5">Guest Details</th>
-                                <th class="p-3.5">Status</th>
-                                <th class="p-3.5">+1 Guest</th>
-                                <th class="p-3.5">Dietary Needs</th>
-                                <th class="p-3.5">Message</th>
-                                <th class="p-3.5 text-right">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody id="rsvp-table-body" class="divide-y divide-stone-200 bg-white">
-                            <!-- Injected JS -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Application Script Logic -->
-    <script>
-        // Sample Initial RSVP Storage (In-Memory Session)
-        let rsvpList = [
-            {
-                id: '1',
-                name: 'Eleanor Vance',
-                email: 'eleanor@example.com',
-                attendance: 'Attending',
-                dietary: 'Vegetarian',
-                hasPlusOne: true,
-                plusOneName: 'Liam Vance',
-                plusOneDietary: 'None',
-                notes: 'So excited to celebrate with you both!',
-                timestamp: '2026-06-12 14:30'
-            },
-            {
-                id: '2',
-                name: 'Marcus Brody',
-                email: 'marcus@example.com',
-                attendance: 'Attending',
-                dietary: 'None',
-                hasPlusOne: false,
-                plusOneName: '',
-                plusOneDietary: '',
-                notes: 'Wishing you decades of happiness.',
-                timestamp: '2026-06-14 09:15'
-            },
-            {
-                id: '3',
-                name: 'Sophia Martinez',
-                email: 'sophia@example.com',
-                attendance: 'Declined',
-                dietary: '',
-                hasPlusOne: false,
-                plusOneName: '',
-                plusOneDietary: '',
-                notes: 'Sending all my love from overseas!',
-                timestamp: '2026-06-15 18:40'
-            }
-        ];
-
-        // Countdown Timer Logic
-        const weddingDate = new Date("October 24, 2026 16:00:00").getTime();
-        
-        function updateCountdown() {
-            const now = new Date().getTime();
-            const distance = weddingDate - now;
-
-            if (distance > 0) {
-                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                const mins = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-                const secs = Math.floor((distance % (1000 * 60)) / 1000);
-
-                document.getElementById('cd-days').innerText = String(days).padStart(2, '0');
-                document.getElementById('cd-hours').innerText = String(hours).padStart(2, '0');
-                document.getElementById('cd-mins').innerText = String(mins).padStart(2, '0');
-                document.getElementById('cd-secs').innerText = String(secs).padStart(2, '0');
-            }
-        }
-        setInterval(updateCountdown, 1000);
-        updateCountdown();
-
-        // RSVP Form Controls
-        function togglePlusOneFields() {
-            const attendance = document.getElementById('guest-attendance').value;
-            const plusOneContainer = document.getElementById('plusone-container');
-            const dietaryContainer = document.getElementById('dietary-container');
-            
-            if (attendance === 'Declined') {
-                plusOneContainer.classList.add('hidden');
-                dietaryContainer.classList.add('hidden');
+                // Transition contents smoothly
+                setTimeout(() => {
+                    front.classList.add('hidden');
+                    card.classList.remove('hidden');
+                    setTimeout(() => {
+                        card.classList.remove('opacity-0');
+                    }, 50);
+                }, 300);
             } else {
-                plusOneContainer.classList.remove('hidden');
-                dietaryContainer.classList.remove('hidden');
+                container.classList.remove('open');
+                sealText.textContent = "Click Seal to Open";
+                card.classList.add('opacity-0');
+                
+                setTimeout(() => {
+                    card.classList.add('hidden');
+                    front.classList.remove('hidden');
+                }, 400);
             }
         }
 
-        function togglePlusOneInput() {
-            const checkbox = document.getElementById('has-plusone');
-            const details = document.getElementById('plusone-details');
-            if (checkbox.checked) {
-                details.classList.remove('hidden');
-            } else {
-                details.classList.add('hidden');
-            }
+        // Custom Modal Function
+        function showModal(msg, iconClass = "fa-circle-info") {
+            document.getElementById('modalMessage').textContent = msg;
+            document.getElementById('modalIcon').innerHTML = `<i class="fa-solid ${iconClass}"></i>`;
+            document.getElementById('customModal').classList.remove('hidden');
         }
 
-        function handleRsvpSubmit(event) {
-            event.preventDefault();
+        function closeModal() {
+            document.getElementById('customModal').classList.add('hidden');
+        }
 
-            const name = document.getElementById('guest-name').value.trim();
-            const email = document.getElementById('guest-email').value.trim();
-            const attendance = document.getElementById('guest-attendance').value;
-            const dietary = document.getElementById('guest-dietary').value.trim();
-            const hasPlusOne = document.getElementById('has-plusone').checked;
-            const plusOneName = document.getElementById('plusone-name').value.trim();
-            const plusOneDietary = document.getElementById('plusone-dietary').value.trim();
-            const notes = document.getElementById('guest-notes').value.trim();
+        // Handle RSVP Form Submission
+        document.getElementById('rsvpForm').addEventListener('submit', function(e) {
+            e.preventDefault();
 
-            const newEntry = {
-                id: Date.now().toString(),
-                name,
-                email,
-                attendance,
-                dietary: attendance === 'Attending' ? dietary : '',
-                hasPlusOne: attendance === 'Attending' ? hasPlusOne : false,
-                plusOneName: (attendance === 'Attending' && hasPlusOne) ? plusOneName : '',
-                plusOneDietary: (attendance === 'Attending' && hasPlusOne) ? plusOneDietary : '',
-                notes,
-                timestamp: new Date().toLocaleString([], { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' })
+            const rsvpEntry = {
+                name: document.getElementById('name').value.trim(),
+                attendance: document.getElementById('attendance').value,
+                guests: document.getElementById('guests').value,
+                dietary: document.getElementById('dietary').value.trim(),
+                timestamp: new Date().toLocaleString()
             };
 
-            rsvpList.unshift(newEntry);
+            let rsvpList = JSON.parse(localStorage.getItem('weddingRSVPs')) || [];
+            rsvpList.push(rsvpEntry);
+            localStorage.setItem('weddingRSVPs', JSON.stringify(rsvpList));
 
-            // Display Confirmation UI
-            const form = document.getElementById('rsvp-form');
-            const confirmation = document.getElementById('rsvp-confirmation');
-            const confirmText = document.getElementById('rsvp-confirm-text');
+            document.getElementById('rsvpForm').reset();
+            const successDiv = document.getElementById('successMessage');
+            successDiv.classList.remove('hidden');
 
-            form.classList.add('hidden');
-            confirmation.classList.remove('hidden');
+            setTimeout(() => {
+                successDiv.classList.add('hidden');
+            }, 6000);
+        });
 
-            if (attendance === 'Attending') {
-                confirmText.innerText = `We are delighted that you (${name}${hasPlusOne && plusOneName ? ' & ' + plusOneName : ''}) will join us on our wedding day! A confirmation reference has been recorded.`;
-            } else {
-                confirmText.innerText = `Thank you for letting us know, ${name}. We will miss you, but appreciate your warm wishes!`;
-            }
-        }
+        // Export RSVPs to CSV
+        function exportToCSV() {
+            let rsvpList = JSON.parse(localStorage.getItem('weddingRSVPs')) || [];
 
-        function resetRsvpForm() {
-            document.getElementById('rsvp-form').reset();
-            document.getElementById('plusone-details').classList.add('hidden');
-            togglePlusOneFields();
-            document.getElementById('rsvp-form').classList.remove('hidden');
-            document.getElementById('rsvp-confirmation').classList.add('hidden');
-        }
-
-        // Host Portal Management Logic
-        function toggleHostModal(show) {
-            const modal = document.getElementById('host-modal');
-            if (show) {
-                modal.classList.remove('hidden');
-            } else {
-                modal.classList.add('hidden');
-            }
-        }
-
-        function verifyPasscode() {
-            const code = document.getElementById('host-passcode').value;
-            const error = document.getElementById('login-error');
-            
-            // Simple default password check
-            if (code === '1234') {
-                error.classList.add('hidden');
-                document.getElementById('host-login-view').classList.add('hidden');
-                document.getElementById('host-dashboard-view').classList.remove('hidden');
-                renderRsvpList();
-            } else {
-                error.classList.remove('hidden');
-            }
-        }
-
-        function renderRsvpList() {
-            const tbody = document.getElementById('rsvp-table-body');
-            const search = document.getElementById('search-rsvp').value.toLowerCase();
-            const filter = document.getElementById('filter-status').value;
-
-            // Filter logic
-            const filtered = rsvpList.filter(item => {
-                const matchesSearch = item.name.toLowerCase().includes(search) || item.email.toLowerCase().includes(search);
-                const matchesStatus = filter === 'ALL' || item.attendance === filter;
-                return matchesSearch && matchesStatus;
-            });
-
-            // Stats calculation
-            let totalResponses = rsvpList.length;
-            let totalAttending = 0;
-            let totalDeclined = 0;
-            let totalDietary = 0;
-
-            rsvpList.forEach(r => {
-                if (r.attendance === 'Attending') {
-                    totalAttending += 1;
-                    if (r.hasPlusOne) totalAttending += 1;
-                    if (r.dietary || r.plusOneDietary) totalDietary += 1;
-                } else if (r.attendance === 'Declined') {
-                    totalDeclined += 1;
-                }
-            });
-
-            document.getElementById('stat-responses').innerText = totalResponses;
-            document.getElementById('stat-attending').innerText = totalAttending;
-            document.getElementById('stat-declined').innerText = totalDeclined;
-            document.getElementById('stat-dietary').innerText = totalDietary;
-
-            // Render table content
-            if (filtered.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-stone-400">No matching responses found.</td></tr>`;
+            if (rsvpList.length === 0) {
+                showModal("No RSVPs have been recorded yet!", "fa-circle-exclamation");
                 return;
             }
 
-            tbody.innerHTML = filtered.map(item => `
-                <tr class="hover:bg-stone-50 transition">
-                    <td class="p-3.5">
-                        <div class="font-semibold text-stone-900">${escapeHtml(item.name)}</div>
-                        <div class="text-stone-400 text-[11px]">${escapeHtml(item.email)}</div>
-                    </td>
-                    <td class="p-3.5">
-                        ${item.attendance === 'Attending' 
-                            ? `<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-100 text-emerald-800"><i class="fa-solid fa-check mr-1"></i> Attending</span>`
-                            : `<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-rose-100 text-rose-800"><i class="fa-solid fa-xmark mr-1"></i> Declined</span>`
-                        }
-                    </td>
-                    <td class="p-3.5">
-                        ${item.hasPlusOne && item.plusOneName 
-                            ? `<div class="font-medium text-stone-800">${escapeHtml(item.plusOneName)}</div>` 
-                            : `<span class="text-stone-400">None</span>`
-                        }
-                    </td>
-                    <td class="p-3.5">
-                        <div class="max-w-xs truncate" title="${escapeHtml(item.dietary || item.plusOneDietary || 'None')}">
-                            ${item.dietary ? `<span class="bg-amber-50 text-amber-900 px-1.5 py-0.5 rounded border border-amber-200">Main: ${escapeHtml(item.dietary)}</span>` : ''}
-                            ${item.plusOneDietary ? `<span class="bg-amber-50 text-amber-900 px-1.5 py-0.5 rounded border border-amber-200 block mt-1">+1: ${escapeHtml(item.plusOneDietary)}</span>` : ''}
-                            ${!item.dietary && !item.plusOneDietary ? `<span class="text-stone-400">None</span>` : ''}
-                        </div>
-                    </td>
-                    <td class="p-3.5">
-                        <div class="max-w-xs truncate text-stone-600" title="${escapeHtml(item.notes)}">
-                            ${item.notes ? escapeHtml(item.notes) : '<span class="text-stone-400">-</span>'}
-                        </div>
-                    </td>
-                    <td class="p-3.5 text-right">
-                        <button onclick="deleteRsvp('${item.id}')" class="text-stone-400 hover:text-rose-600 transition p-1">
-                            <i class="fa-regular fa-trash-can"></i>
-                        </button>
-                    </td>
-                </tr>
-            `).join('');
-        }
+            let csvRows = ["Full Name,Attendance,Guests,Dietary Restrictions,Timestamp"];
 
-        function deleteRsvp(id) {
-            rsvpList = rsvpList.filter(item => item.id !== id);
-            renderRsvpList();
-        }
-
-        function exportToCsv() {
-            if (rsvpList.length === 0) return;
-
-            let csvContent = "data:text/csv;charset=utf-8,";
-            csvContent += "ID,Name,Email,Attendance,Dietary,Has Plus One,Plus One Name,Plus One Dietary,Notes,Timestamp\n";
-
-            rsvpList.forEach(r => {
-                const row = [
-                    r.id,
-                    `"${r.name.replace(/"/g, '""')}"`,
-                    `"${r.email.replace(/"/g, '""')}"`,
-                    r.attendance,
-                    `"${(r.dietary || '').replace(/"/g, '""')}"`,
-                    r.hasPlusOne ? 'Yes' : 'No',
-                    `"${(r.plusOneName || '').replace(/"/g, '""')}"`,
-                    `"${(r.plusOneDietary || '').replace(/"/g, '""')}"`,
-                    `"${(r.notes || '').replace(/"/g, '""')}"`,
-                    `"${r.timestamp}"`
-                ].join(",");
-                csvContent += row + "\n";
+            rsvpList.forEach(row => {
+                let safeName = `"${(row.name || '').replace(/"/g, '""')}"`;
+                let safeDietary = `"${(row.dietary || '').replace(/"/g, '""')}"`;
+                csvRows.push(`${safeName},${row.attendance},${row.guests},${safeDietary},"${row.timestamp}"`);
             });
 
-            const encodedUri = encodeURI(csvContent);
-            const link = document.createElement("a");
-            link.setAttribute("href", encodedUri);
-            link.setAttribute("download", `wedding_rsvp_export_${new Date().toISOString().slice(0,10)}.csv`);
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }
-
-        function escapeHtml(str) {
-            if (!str) return '';
-            return str.replace(/&/g, "&amp;")
-                      .replace(/</g, "&lt;")
-                      .replace(/>/g, "&gt;")
-                      .replace(/"/g, "&quot;")
-                      .replace(/'/g, "&#039;");
+            let csvString = csvRows.join("\n");
+            let blob = new Blob([csvString], { type: "text/csv;charset=utf-8;" });
+            let link = document.createElement("a");
+            
+            if (navigator.msSaveBlob) {
+                navigator.msSaveBlob(blob, "wedding_guest_list_rsvps.csv");
+            } else {
+                link.href = URL.createObjectURL(blob);
+                link.setAttribute("download", "wedding_guest_list_rsvps.csv");
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }
         }
     </script>
 </body>
